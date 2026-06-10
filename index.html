@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>南宙会 - The South Universe of Meeting</title>
+<style>
+  :root {
+    --green-dark: #1e4a20;
+    --green-main: #2C5F2E;
+    --green-light: #EAF3DE;
+    --gold: #D4A843;
+    --gold-light: #FBF3E0;
+    --text: #1a1a1a;
+    --text-sub: #555;
+    --border: #ddd;
+    --bg: #f7f5ef;
+    --white: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Hiragino Mincho ProN', 'Yu Mincho', serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.8; }
+  a { color: var(--green-main); text-decoration: none; }
+  a:hover { color: var(--gold); }
+
+  /* ヘッダー */
+  .site-header { background: var(--green-dark); color: #fff; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; }
+  .logo { display: flex; align-items: center; gap: 14px; }
+  .logo-mark { width: 44px; height: 44px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: var(--green-dark); flex-shrink: 0; }
+  .logo-text .name { font-size: 22px; letter-spacing: 6px; }
+  .logo-text .sub { font-size: 10px; color: rgba(255,255,255,0.6); letter-spacing: 2px; font-family: 'Georgia', serif; }
+  .header-info { text-align: right; font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.7; }
+  .announce { background: var(--gold); padding: 7px 24px; font-size: 12px; color: var(--green-dark); font-weight: bold; }
+
+  /* ナビ */
+  nav { background: #163318; overflow-x: auto; white-space: nowrap; }
+  nav a { display: inline-block; color: rgba(255,255,255,0.8); padding: 10px 14px; font-size: 12px; font-family: 'Hiragino Kaku Gothic ProN', sans-serif; border-right: 1px solid rgba(255,255,255,0.1); transition: background 0.2s; }
+  nav a:hover, nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+  /* メインレイアウト */
+  .container { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+  .two-col { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* セクション */
+  .section { margin-bottom: 24px; }
+  .section-title { font-size: 13px; font-weight: bold; color: var(--green-dark); letter-spacing: 2px; padding: 6px 10px; background: var(--green-light); border-left: 4px solid var(--green-main); margin-bottom: 12px; font-family: 'Hiragino Kaku Gothic ProN', sans-serif; }
+
+  /* カード */
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; margin-bottom: 10px; }
+  .card-title { font-size: 13px; font-weight: bold; color: var(--green-dark); margin-bottom: 6px; }
+  .card p { font-size: 12px; color: var(--text-sub); line-height: 1.7; }
+
+  /* インフォ */
+  .info-block { background: var(--white); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
+  .info-header { background: var(--green-main); color: #fff; padding: 6px 12px; font-size: 12px; font-weight: bold; font-family: 'Hiragino Kaku Gothic ProN', sans-serif; }
+  .info-body { padding: 12px 14px; }
+  .info-row { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { color: var(--green-main); font-weight: bold; width: 60px; flex-shrink: 0; }
+  .info-val { color: var(--text); }
+  .highlight { color: #cc3300; font-weight: bold; }
+
+  /* 役員会スケジュール */
+  .schedule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .sch-item { font-size: 11px; padding: 4px 6px; background: var(--white); border: 1px solid var(--border); }
+  .sch-item.done { color: #cc3300; }
+
+  /* サイドバー */
+  .sidebar .card { padding: 12px; }
+  .sidebar .section-title { font-size: 12px; }
+
+  /* カレンダー埋め込み */
+  .cal-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .cal-wrap iframe { width: 100%; display: block; border: none; }
+
+  /* 歴代会長 */
+  .rekidai-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .rekidai-table th { background: var(--green-main); color: #fff; padding: 6px 10px; font-weight: normal; }
+  .rekidai-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .rekidai-table td.num { width: 80px; color: var(--text-sub); }
+  .rekidai-table td.photo { width: 70px; text-align: center; }
+  .rekidai-table td.photo img { width: 56px; height: 68px; object-fit: cover; border: 1px solid var(--border); }
+  .rekidai-table td.info { }
+  .rekidai-table .kacho-name { font-size: 16px; font-weight: bold; }
+  .rekidai-table .kacho-theme { font-size: 11px; color: var(--green-main); margin-top: 4px; }
+  .rekidai-table tr:nth-child(even) td { background: #fafaf7; }
+
+  /* 商いコーナー */
+  .town-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .town-table th { background: var(--green-main); color: #fff; padding: 6px 8px; }
+  .town-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .town-table tr:nth-child(even) td { background: #fafaf7; }
+  .town-table .comment { background: var(--white) !important; font-size: 11px; color: var(--text-sub); padding: 3px 8px 6px; }
+
+  /* 概要 */
+  .gaiyo-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .gaiyo-table .hd { background: var(--green-main); color: #fff; padding: 6px 12px; font-size: 12px; }
+  .gaiyo-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+
+  /* フォーム（出欠） */
+  .form-block { background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 16px; }
+  .form-block label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 3px; margin-top: 10px; }
+  .form-block input[type=text], .form-block select { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 3px; font-size: 13px; font-family: inherit; }
+  .form-block .radio-group { display: flex; gap: 16px; margin-top: 4px; }
+  .form-block .radio-group label { margin: 0; display: flex; align-items: center; gap: 4px; color: var(--text); }
+  .btn-submit { margin-top: 14px; background: var(--green-main); color: #fff; border: none; padding: 9px 24px; border-radius: 3px; font-size: 13px; cursor: pointer; font-family: inherit; }
+  .btn-submit:hover { background: var(--green-dark); }
+
+  /* 写真グリッド */
+  .photo-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }
+  .photo-grid a img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+  .photo-meta { background: var(--white); border: 1px solid var(--border); padding: 10px 12px; font-size: 12px; margin-top: 6px; }
+
+  /* フッター */
+  footer { background: var(--green-dark); color: rgba(255,255,255,0.7); padding: 16px 24px; font-size: 11px; text-align: center; margin-top: 32px; }
+  footer a { color: rgba(255,255,255,0.8); }
+
+  /* ページ切り替え */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* 会員ページ */
+  .member-access { background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 20px; }
+  .member-link-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: 4px; margin-bottom: 8px; border: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+  .member-link-item:hover { background: var(--green-light); }
+  .member-icon { width: 36px; height: 36px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .member-link-text { flex: 1; }
+  .member-link-text .title { font-size: 13px; font-weight: bold; color: var(--green-dark); }
+  .member-link-text .sub { font-size: 11px; color: var(--text-sub); }
+  .lock-badge { font-size: 10px; background: var(--green-light); color: var(--green-dark); padding: 2px 8px; border-radius: 10px; }
+
+  /* 年会費 */
+  .fee-box { background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; font-size: 12px; }
+  .fee-box .amount { font-size: 22px; font-weight: bold; color: var(--green-dark); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-mark">南</div>
+      <div class="logo-text">
+        <div class="name">南　宙　会</div>
+        <div class="sub">The South Universe of Meeting</div>
+      </div>
+    </div>
+    <div class="header-info">令和8年度　第32期<br>会員数 330名　Home Page since 2003</div>
+  </div>
+  <div class="announce">◆ 6月例会「至福の休日。華麗なるBBQと加齢には温泉を！」6/27（土）受付9:00〜　四条大宮バスプール集合</div>
+  <nav>
+    <a href="#" class="active" onclick="showPage('top',this)">トップ</a>
+    <a href="#" onclick="showPage('info',this)">事業案内</a>
+    <a href="#" onclick="showPage('gaiyo',this)">概要・会則</a>
+    <a href="#" onclick="showPage('history',this)">南宙会の歩み</a>
+    <a href="#" onclick="showPage('sistem',this)">役員構成</a>
+    <a href="#" onclick="showPage('calendar',this)">カレンダー</a>
+    <a href="#" onclick="showPage('member',this)">会員ページ</a>
+    <a href="#" onclick="showPage('phot',this)">例会写真</a>
+    <a href="#" onclick="showPage('town',this)">商いコーナー</a>
+    <a href="#" onclick="showPage('link',this)">Link Page</a>
+  </nav>
+</header>
+
+<!-- トップページ -->
+<div id="page-top" class="page active">
+<div class="container">
+  <div class="two-col">
+    <div>
+      <div class="section">
+        <div class="section-title">会長方針</div>
+        <div class="card">
+          <div class="card-title">令和8年度　第32期　南宙会<br>会長　田沢 直</div>
+          <p>今年度のテーマ　<strong>「華麗なる南宙会！！〜とびっきりの愛でみんな仲良く楽しく〜」</strong></p>
+          <p style="margin-top:8px">南宙会の目的は、会員相互の親睦と啓蒙を図ること、そして京都商工会議所青年部を後援することにあります。「仲良く楽しく」をモットーに、本気で遊び、本気で語り、本気で仲間を愛し合う組織づくりを目指します。</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">例会のお知らせ</div>
+        <div class="info-block">
+          <div class="info-header">■ 6月例会</div>
+          <div class="info-body">
+            <div class="info-row"><div class="info-label">テーマ</div><div class="info-val">『至福の休日。華麗なるBBQと加齢には温泉を！』</div></div>
+            <div class="info-row"><div class="info-label">日時</div><div class="info-val"><span class="highlight">R8 / 6 / 27（土）</span></div></div>
+            <div class="info-row"><div class="info-label">集合場所</div><div class="info-val">四条大宮バスプール</div></div>
+            <div class="info-row"><div class="info-label">時間</div><div class="info-val">集合 8:45　受付 9:00〜　出発 9:30</div></div>
+            <div class="info-row"><div class="info-label">行先</div><div class="info-val"><span class="highlight">レジャー＆スパリゾート ASOBIYUKU 京都るり渓温泉</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">直近の事業報告</div>
+        <div class="info-block">
+          <div class="info-header">■ 5月例会</div>
+          <div class="info-body">
+            <div class="info-row"><div class="info-label">日時</div><div class="info-val">R8 / 5 / 23（土）</div></div>
+            <div class="info-row"><div class="info-label">集合場所</div><div class="info-val">四条大宮バスプール</div></div>
+            <div class="info-row"><div class="info-label">行先</div><div class="info-val">日帰りバスツアー　島真珠水郷観光船〜</div></div>
+            <div class="info-row"><div class="info-label">参加</div><div class="info-val"><strong>45名</strong></div></div>
+          </div>
+        </div>
+        <div class="info-block">
+          <div class="info-header">■ R8年度 総会</div>
+          <div class="info-body">
+            <div class="info-row"><div class="info-label">日時</div><div class="info-val">R8 / 4 / 17（金）</div></div>
+            <div class="info-row"><div class="info-label">場所</div><div class="info-val">料理旅館　鶴清</div></div>
+            <div class="info-row"><div class="info-label">参加</div><div class="info-val"><strong>120名</strong></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">7月例会　出欠ご回答</div>
+        <div class="form-block">
+          <p style="font-size:12px;color:var(--text-sub);margin-bottom:10px">7月30日（木）タレントダイナミクス / Ace Hotel Kyoto / 登録料13,000円</p>
+          <label>お名前</label>
+          <input type="text" placeholder="例：田沢 直">
+          <label style="margin-top:12px">出欠</label>
+          <div class="radio-group">
+            <label><input type="radio" name="attend" value="1"> 出席</label>
+            <label><input type="radio" name="attend" value="2"> 欠席</label>
+            <label><input type="radio" name="attend" value="3"> 未定</label>
+          </div>
+          <label>性格診断結果</label>
+          <select>
+            <option>ブレイズ</option>
+            <option>ダイナモ</option>
+            <option>テンポ</option>
+            <option>スチール</option>
+          </select>
+          <button class="btn-submit">送信する</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="section">
+        <div class="section-title">定例役員会</div>
+        <div class="card">
+          <p><strong>場所：</strong>ハートピア京都 4F 第5会議室<br>
+          <strong>時間：</strong>PM 6:30〜<br>
+          <strong>原則：</strong>第②火曜日（休日は翌日）</p>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">役員会年間スケジュール</div>
+        <div class="schedule-grid">
+          <div class="sch-item done">第1回 R8/4/14(火) ハートピア</div>
+          <div class="sch-item done">第2回 5/12(火) ハートピア</div>
+          <div class="sch-item done">第3回 6/9(火) 京都経済センター3H</div>
+          <div class="sch-item">第4回 7/14(火) ハートピア</div>
+          <div class="sch-item">第5回 8/12(水) 納涼会</div>
+          <div class="sch-item">第6回 9/8(火) ハートピア</div>
+          <div class="sch-item">第7回 10/13(火) 京都経済センター3H</div>
+          <div class="sch-item">第8回 11/10(火) ハートピア</div>
+          <div class="sch-item">第9回 12/8(火) 京都経済センター3H</div>
+          <div class="sch-item">第10回 R9/1/12(火) 新年会</div>
+          <div class="sch-item">第11回 2/9(火) ハートピア</div>
+          <div class="sch-item">第12回 3/24(水) 新旧懇親会</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">年会費振込先</div>
+        <div class="fee-box">
+          <div class="amount">20,000円</div>
+          <p style="margin-top:6px">早めのお振込みをお願いいたします<br>
+          総会終了後30日以内　R8/5/18まで<br><br>
+          京都中央信用金庫 岡崎支店（店番096）<br>
+          普通預金 口座No. <strong>0309780</strong><br>
+          受取人：南宙会（ナンチュウカイ）</p>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">YEG関係</div>
+        <div class="card">
+          <p><a href="https://www.kyoto-yeg.jp/" target="_blank">Kyoto YEG ホームページ</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 概要ページ -->
+<div id="page-gaiyo" class="page">
+<div class="container">
+  <div class="section-title" style="font-size:16px;padding:10px 14px;margin-bottom:20px">南　宙　会　概　要</div>
+  <table class="gaiyo-table" border="1" cellspacing="0" bordercolor="#ddd">
+    <tr><td class="hd" colspan="2">●南宙会とは</td></tr>
+    <tr><td colspan="2">京都商工会議所青年部ＯＢ <strong>「南宙会」</strong> といいます。<br>
+    南宙会は、京都商工会議所青年部ＯＢの呼びかけにより、 親睦・交流を目的として１９９４年（平成６年）４月に発足しました。<br>
+    会員相互が親睦、研修、情報交換などの交流を通じて、斬新なアイデアや発想に出会い、南宙会活動を通じて自分自身が成長するとともに、会員企業、そして京都に貢献していく、そういう会を目指しています。</td></tr>
+    <tr><td class="hd" colspan="2">●概要</td></tr>
+    <tr><td colspan="2">
+      ■ 設立年月日　平成6年 1994年 4月 1日<br>
+      ■ 目　的　　　１・本会は、会員相互の親睦と啓蒙を図る。２・京都商工会議所青年部を後援する。<br>
+      ■ 会員資格　　１・京都商工会議所青年部の卒業者　２・京都商工会議所青年部に在籍したもので役員会の承認を得た者<br>
+      ■ 会員数　　　（令和8年4月末日　見込み）　<strong>330名</strong>　登録
+    </td></tr>
+    <tr><td class="hd" colspan="2">●南宙会連絡先</td></tr>
+    <tr><td colspan="2">
+      ■ 南宙会メーリングリスト（会員専用）　<a href="mailto:nanchukai-all@nanchukai-ml.com">nanchukai-all@nanchukai-ml.com</a><br>
+      ■ 南宙会HP事務局　<a href="mailto:office@nanchukai">office@nanchukai</a><br>
+      ■ 南宙会HP広報　<a href="mailto:info@nanchukai">info@nanchukai</a>
+    </td></tr>
+    <tr><td class="hd" colspan="2">●シンボルマーク</td></tr>
+    <tr>
+      <td style="width:120px;text-align:center"><img src="https://www.nanchukai.com/gazou/mark1.jpg" width="99" height="103" alt="南宙会シンボルマーク" onerror="this.style.display='none'"></td>
+      <td>この書は、南宙会をモチーフとして京都商工会議所会頭 故 塚本幸一様が書かれたものであります。未来への躍進を期し、躍動感のある構成で明るく親しみのある表現をされています。バッチは南宙会をモチーフとし<strong>ＧＯＬＤ</strong>とブルーで気品と拡張ある表現をしています。又、平成22年度には品格あるネームプレートを作成致しました。</td>
+    </tr>
+  </table>
+  <div style="margin-top:16px;font-size:12px">
+    <a href="https://www.nanchukai.com/2026kaisoku.htm" target="_blank">■ 南宙会会則</a>　　
+    <a href="https://www.nanchukai.com/kaichosenkokitei.htm" target="_blank">■ 会長選考委員会規定</a>　　
+    <a href="https://www.nanchukai.com/hpkiyaku.htm" target="_blank">■ HP規約</a>　　
+    <a href="https://www.nanchukai.com/bbs.htm" target="_blank">■ 掲示板規約</a>
+  </div>
+</div>
+</div>
+
+<!-- 歴代会長ページ -->
+<div id="page-history" class="page">
+<div class="container">
+  <div class="section-title" style="font-size:16px;padding:10px 14px;margin-bottom:8px">南宙会の歩み　南宙会歴代会長</div>
+  <p style="font-size:11px;color:var(--text-sub);margin-bottom:16px;padding:6px 10px;background:var(--white);border:1px solid var(--border)">歴代のページ閲覧希望の方は広報までお知らせ頂ければ実費にてDVDをお造りします。</p>
+  <table class="rekidai-table" border="1" cellspacing="0">
+    <tr><th>代</th><th>写真</th><th>氏名・年度・企業</th></tr>
+    <tr><td class="num">初代・２代目会長</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/rekidai/ueda.jpg" alt="上田恒弘"></td><td class="info">平成7・8年度会長<br><span class="kacho-name">上田 恒弘</span>　ウエダ　ツネヒロ<br>企業名　元・内外物産株式会社（専務取締役）</td></tr>
+    <tr><td class="num">３代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/rekidai/kinosita.jpg" alt="木下進"></td><td class="info">平成9年度会長<br><span class="kacho-name">木下　進</span>　キノシタ　ススム<br>企業名　株式会社ＫＳＡインターナショナル（代表取締役）</td></tr>
+    <tr><td class="num">４代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/maruoka.jpg" alt="丸岡隆男"></td><td class="info">平成10年度会長<br><span class="kacho-name">丸岡 隆男</span>　マルオカ　タカオ<br>企業名　協栄ビル管理株式会社（取締役）</td></tr>
+    <tr><td class="num">５代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/rekidai/1tanaka.jpg" alt="田中憲一"></td><td class="info">平成11年度会長<br><span class="kacho-name">田中 憲一</span>　タナカ　ケンイチ<br>企業名　株式会社鳥羽弥（代表取締役）</td></tr>
+    <tr><td class="num">６代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/tukamoto.jpg" alt="塚本真理"></td><td class="info">平成12年度会長<br><span class="kacho-name">塚本 真理</span>　ツカモト　マリ<br>企業名　有限会社コンパイル（代表取締役）</td></tr>
+    <tr><td class="num">７代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/rekidai/sawada.jpg" alt="澤田彰広"></td><td class="info">平成13年度会長<br><span class="kacho-name">澤田 彰広</span>　サワダ　アキヒロ<br>企業名　淀　牛宗（代表）</td></tr>
+    <tr><td class="num">８代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/rekidai/tanakamine.jpg" alt="田中峰子"></td><td class="info">平成14年度会長<br><span class="kacho-name">田中 峰子</span>　タナカ　ミネコ<br>企業名　株式会社富田屋（代表取締役）</td></tr>
+    <tr><td class="num">９代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/rekidai/takahashi.jpg" alt="高橋東作"></td><td class="info">平成15年度会長<br><span class="kacho-name">高橋 東作</span>　タカハシ　トウサク<br>企業名　朝陽堂印刷株式会社（代表取締役社長）</td></tr>
+    <tr><td class="num">10代目<br><span style="color:#cc3300">10周年</span></td><td class="photo"><img src="https://www.nanchukai.com/yakuin/shibata.jpg" alt="柴田良武"></td><td class="info">平成16年度会長<br><span class="kacho-name">柴田　良武</span>　シバタ　ヨシタケ<br>企業名　山晃住研（代表）</td></tr>
+    <tr><td class="num">11代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/himura.jpg" alt="樋村幸一"></td><td class="info">平成17年度会長<br><span class="kacho-name">樋村　幸一</span>　ヒムラ　コウイチ<br>企業名　株式会社ハウジング計画（代表取締役）<div class="kacho-theme">テーマ「感動　感謝　感激」</div></td></tr>
+    <tr><td class="num">12代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/asai.jpg" alt="浅井興二"></td><td class="info">平成18年度会長<br><span class="kacho-name">浅井　興二</span>　アザイ　コウジ<br>企業名　株式会社東五六（代表取締役社長）</td></tr>
+    <tr><td class="num">13代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/tabushi19.JPG" alt="田伏裕一"></td><td class="info">平成19年度会長<br><span class="kacho-name">田伏　裕一</span>　タブシ　ユウイチ<br>企業名　株式会社田伏石材商店（代表取締役）</td></tr>
+    <tr><td class="num">14代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/kawaguchi.jpg" alt="川口昌良"></td><td class="info">平成20年度会長<br><span class="kacho-name">川口　昌良</span>　カワグチ　マサヨシ<br>企業名　株式会社青雲堂（代表取締役）<div class="kacho-theme">テーマ「恩故知身」</div></td></tr>
+    <tr><td class="num">15代目<br><span style="color:#cc3300">15周年</span></td><td class="photo"><img src="https://www.nanchukai.com/yakuin/oota.jpg" alt="太田達之"></td><td class="info">平成21年度会長<br><span class="kacho-name">太田　達之</span>　オオタ　タツユキ<br>企業名　株式会社ワイングロッサリー（専務取締役）<div class="kacho-theme">テーマ「主役はあなた」</div></td></tr>
+    <tr><td class="num">16代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/shimizu.jpg" alt="清水章洋"></td><td class="info">平成22年度会長<br><span class="kacho-name">清水　章洋</span>　シミズ　アキヒロ<br>企業名　株式会社清風工務店（代表取締役）<div class="kacho-theme">テーマ「温」仲良く　楽しく</div></td></tr>
+    <tr><td class="num">17代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/2izutu.jpg" alt="井筒平和"></td><td class="info">平成23年度会長<br><span class="kacho-name">井筒　平和</span>　イズツ　ヤスカズ<br>企業名　和光株式会社（代表取締役）<div class="kacho-theme">テーマ「プラス思考」元気いっぱい　笑顔いっぱい</div></td></tr>
+    <tr><td class="num">18代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/uedasyo.jpg" alt="上田彰一"></td><td class="info">平成24年度会長<br><span class="kacho-name">上田　彰一</span>　ウエダ　ショウイチ<br>企業名　有限会社松原上田や（代表取締役）<div class="kacho-theme">テーマ「誇ろう南宙会人」磨こう人間力</div></td></tr>
+    <tr><td class="num">19代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/rekidai/takahashi19.jpg" alt="高橋泰彦"></td><td class="info">平成25年度会長<br><span class="kacho-name">高橋　泰彦</span>　タカハシ　ヤスヒコ<br>企業名　フクヤ洋服店（代表）<div class="kacho-theme">テーマ「他喜力を高める」みんなの喜ぶ顔が見たいから</div></td></tr>
+    <tr><td class="num">20代目<br><span style="color:#cc3300">20周年</span></td><td class="photo"><img src="https://www.nanchukai.com/yakuin/tuji.JPG" alt="辻繁信"></td><td class="info">平成26年度会長<br><span class="kacho-name">辻　繁信</span>　ツジ　シゲノブ<br>企業名　株式会社辻工務店（代表取締役）<div class="kacho-theme">テーマ「栄光の20年！」ホッとする究極の仲間づくり</div></td></tr>
+    <tr><td class="num">21代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/iwamura.JPG" alt="岩村眞樹雄"></td><td class="info">平成27年度会長<br><span class="kacho-name">岩村　眞樹雄</span>　イワムラ　マキオ<br>企業名　株式会社象彦設計（代表取締役）<div class="kacho-theme">テーマ「南宙会は大人の社交場」</div></td></tr>
+    <tr><td class="num">22代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/yamaryo.jpg" alt="山領正"></td><td class="info">平成28年度会長<br><span class="kacho-name">山領　正</span>　ヤマリョウ　タダシ<br>企業名　有限会社一級建築士事務所ターボ設計（代表取締役）<div class="kacho-theme">テーマ「楽しもう異世代交流」やっちゃえ南宙会</div></td></tr>
+    <tr><td class="num">23代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/yamanashisyo.JPG" alt="山梨彰一"></td><td class="info">平成29年度会長<br><span class="kacho-name">山梨　彰一</span>　ヤマナシ　ショウイチ<br>企業名　株式会社山梨製餡（代表取締役）<div class="kacho-theme">テーマ「おかげさまで南宙会」毎月行っても又おもろい</div></td></tr>
+    <tr><td class="num">24代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/DSC_5029.jpg" alt="谷里美"></td><td class="info">平成30年度会長<br><span class="kacho-name">谷　里美</span>　タニ　サトミ<br>企業名　(株)藤林商店（代表取締役）<div class="kacho-theme">テーマ「とびきりのひとときを」一期一会をいつまでも</div></td></tr>
+    <tr><td class="num">25代目<br><span style="color:#cc3300">25周年</span></td><td class="photo"><img src="https://www.nanchukai.com/yakuin/mizukami.png" alt="水上隆仁"></td><td class="info">令和元年度会長<br><span class="kacho-name">水上　隆仁</span>　ミズカミ　リュウジ<br>企業名　(株)舞扇堂（代表取締役）<div class="kacho-theme">テーマ「グッドタイムをともに！」みいんなで祝おう、ありがとう！25周年！</div></td></tr>
+    <tr><td class="num">26・27代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/tanaka.jpg" alt="田中正人"></td><td class="info">令和2・3年度会長<br><span class="kacho-name">田中　正人</span>　タナカ　マサト<br>企業名　(株)丸十田中商店（代表取締役）<div class="kacho-theme">テーマ「和気藹々」「人に会う贅沢」仲良く！楽しく！和気藹々！</div></td></tr>
+    <tr><td class="num">28代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/watanabe.jpg" alt="渡辺保彦"></td><td class="info">令和4年度会長<br><span class="kacho-name">渡辺　保彦</span>　ワタナベ　ヤスヒコ<br>企業名　有限会社ワイアンドエス（代表取締役）<div class="kacho-theme">テーマ「Go To 南宙会」行こうよ　作ろう　楽しむ例会</div></td></tr>
+    <tr><td class="num">29代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/rekidai/sugisita.jpg" alt="杉下聰"></td><td class="info">令和5年度会長<br><span class="kacho-name">杉下　聰</span>　スギシタ　サトル<br>企業名　有限会社スギシタ（常務取締役）<div class="kacho-theme">テーマ「無敵の南宙会」30周年に向けて、乗り遅れるな！</div></td></tr>
+    <tr><td class="num">30代目<br><span style="color:#cc3300">30周年</span></td><td class="photo"><img src="https://www.nanchukai.com/yakuin/rekidai/yamamotokai.jpg" alt="山本恵"></td><td class="info">令和6年度会長<br><span class="kacho-name">山本　恵</span>　ヤマモト　ケイ<br>企業名　株式会社アクティブケイ（代表）<div class="kacho-theme">テーマ「YOU 友 湯 ♨」〜あなたと　ともだち　ゆったりと〜</div></td></tr>
+    <tr><td class="num">31代目</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/simoitiyukinori.jpg" alt="下市幸則"></td><td class="info">令和7年度会長<br><span class="kacho-name">下市　幸則</span>　シモイチ　ユキノリ<br>企業名　司法書士法人しもいち事務所（代表）<div class="kacho-theme">テーマ「南宙会（みなみぞら）のディスタンス」〜大きく、長く、そして近い南宙会〜</div></td></tr>
+    <tr style="background:#f0f7f0"><td class="num" style="color:var(--green-dark);font-weight:bold">32代目<br>（現会長）</td><td class="photo"><img src="https://www.nanchukai.com/yakuin/2026tazawa.jpg" alt="田沢直"></td><td class="info">令和8年度会長<br><span class="kacho-name" style="font-size:18px;color:var(--green-dark)">田沢　直</span>　タザワ　タダシ<br>企業名　(株)タザワ電気（代表取締役）<div class="kacho-theme" style="font-size:12px">テーマ「華麗なる南宙会！！」〜とびっきりの愛でみんな仲良く楽しく〜</div></td></tr>
+  </table>
+</div>
+</div>
+
+<!-- 役員構成ページ -->
+<div id="page-sistem" class="page">
+<div class="container">
+  <div class="section-title" style="font-size:16px;padding:10px 14px;margin-bottom:16px">令和8年度　南宙会役員　役割表</div>
+  <div class="card">
+    <img src="https://www.nanchukai.com/gazou/2026yakuin.jpg" style="max-width:100%;height:auto;display:block" alt="役員役割表" onerror="this.after('（画像を読み込めませんでした。元サイトよりご確認ください）')">
+  </div>
+</div>
+</div>
+
+<!-- カレンダーページ -->
+<div id="page-calendar" class="page">
+<div class="container">
+  <div class="section-title" style="font-size:16px;padding:10px 14px;margin-bottom:16px">南宙会スケジュールカレンダー</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="background:var(--green-main);color:#fff;padding:8px 14px;font-size:13px;font-family:sans-serif">各種例会・事業・クラブ活動　カレンダー</div>
+    <div class="cal-wrap">
+      <iframe src="https://www.google.com/calendar/embed?title=%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC&height=600&wkst=1&bgcolor=%23FFFFFF&src=nancyukai%40gmail.com&color=%23B1365F&src=ja.japanese%23holiday%40group.v.calendar.google.com&color=%2329527A&ctz=Asia%2FTokyo" style="border:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+    </div>
+  </div>
+  <p style="font-size:11px;color:var(--text-sub);margin-top:8px">記事、掲載事項は南宙会広報まで <a href="mailto:info@nanchukai">info@nanchukai</a> でお送り下さい</p>
+</div>
+</div>
+
+<!-- 会員ページ -->
+<div id="page-member" class="page">
+<div class="container">
+  <div class="section-title" style="font-size:16px;padding:10px 14px;margin-bottom:16px">M E M B E R</div>
+  <div class="member-access">
+    <div style="background:var(--green-light);border:1px solid var(--border);border-radius:4px;padding:12px 14px;margin-bottom:16px;font-size:12px">
+      <strong>新入会員</strong>　令和8年度は <span style="color:#cc3300;font-size:15px;font-weight:bold">20名</span> の新入会予定がありました。<br>
+      <strong>2026年4月末日　現在　<span style="color:#cc3300;font-size:16px">330名</span>　登録（予）</strong>
+    </div>
+    <p style="font-size:12px;color:var(--text-sub);margin-bottom:16px;padding:10px;background:var(--white);border:1px solid var(--border);border-radius:4px">
+      上記の会員ログインは会員資格のある方だけに公開しております。<br>
+      ログインして頂くと<strong>南宙会Webアルバム</strong>の閲覧や保存が可能となります。パスワードは<a href="mailto:office@nanchukai">南宙会ホームページ担当者</a>までメールでお尋ね下さい。担当役員にてご本人確認をし、直接メールにてお知らせいたします。個人情報保護のため<strong>南宙会名簿</strong>の掲示閲覧を中止いたしました。
+    </p>
+    <div class="section-title">会員専用コンテンツ</div>
+    <div class="member-link-item">
+      <div class="member-icon" style="background:var(--green-light)">📋</div>
+      <div class="member-link-text">
+        <div class="title">令和8年度 役員会資料</div>
+        <div class="sub">Google Drive共有フォルダ（役員・幹事）</div>
+      </div>
+      <span class="lock-badge">🔒 要ログイン</span>
+    </div>
+    <div class="member-link-item">
+      <div class="member-icon" style="background:#E6F1FB">📸</div>
+      <div class="member-link-text">
+        <div class="title">南宙会Webアルバム</div>
+        <div class="sub">例会写真アルバム（会員限定）</div>
+      </div>
+      <span class="lock-badge">🔒 要ログイン</span>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:var(--text-sub)">
+      途中入会者：2026/（順不同）
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 例会写真ページ -->
+<div id="page-phot" class="page">
+<div class="container">
+  <div class="section-title" style="font-size:16px;padding:10px 14px;margin-bottom:8px">2026　PHOTOS PAGE</div>
+  <p style="font-size:12px;color:var(--text-sub);margin-bottom:12px">◎ 下記の画像をクリックし大画面でご覧ください</p>
+
+  <div class="info-block">
+    <div class="info-header" style="display:flex;align-items:center;gap:8px">■ 5月例会　令和8年度　広報PHOTOギャラリー</div>
+    <div style="padding:12px">
+      <div class="photo-grid">
+        <a href="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-01.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-01.JPG" alt="5月例会1" onerror="this.style.background='#eee';this.alt='写真'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-02.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-02.JPG" alt="5月例会2" onerror="this.style.background='#eee'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-03.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-03.JPG" alt="5月例会3" onerror="this.style.background='#eee'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-04.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-04.JPG" alt="5月例会4" onerror="this.style.background='#eee'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-05.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-05.JPG" alt="5月例会5" onerror="this.style.background='#eee'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-06.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/5gatu/2026-05-06.JPG" alt="5月例会6" onerror="this.style.background='#eee'"></a>
+      </div>
+      <div class="photo-meta">
+        <strong>■ 5月例会</strong>　日時 R8/5/23（土）　集合受付 8:15〜　集合 8:45　出発 9:00<br>
+        集合場所 四条大宮バスプール　行先 日帰りバスツアー　島真珠水郷観光船〜<br>
+        参加 <strong>45名</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-block">
+    <div class="info-header">■ R8年度 総会</div>
+    <div style="padding:12px">
+      <div class="photo-grid">
+        <a href="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-01.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-01.JPG" alt="総会1" onerror="this.style.background='#eee'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-02.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-02.JPG" alt="総会2" onerror="this.style.background='#eee'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-03.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-03.JPG" alt="総会3" onerror="this.style.background='#eee'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-04.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-04.JPG" alt="総会4" onerror="this.style.background='#eee'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-05.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-05.JPG" alt="総会5" onerror="this.style.background='#eee'"></a>
+        <a href="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-06.JPG" target="_blank"><img src="https://www.nanchukai.com/gazou/photo/4gatu/2026-04-06.JPG" alt="総会6" onerror="this.style.background='#eee'"></a>
+      </div>
+      <div class="photo-meta">
+        <strong>■ R8年度 総会</strong>　日時 R8/4/17（金）　場所 料理旅館 鶴清<br>
+        受付 17:30〜　R7年度総会 18:00〜　R8年度総会 18:25〜　懇親会 19:10〜<br>
+        参加 <strong>120名</strong>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 商いコーナー -->
+<div id="page-town" class="page">
+<div class="container">
+  <div class="section-title" style="font-size:16px;padding:10px 14px;margin-bottom:8px">南宙会　商いコーナー</div>
+  <p style="font-size:12px;margin-bottom:4px">掲載ご希望の会員様は<a href="mailto:info@nanchukai">南宙会HP担当</a>までご一報下さい</p>
+  <p style="font-size:11px;color:var(--text-sub);margin-bottom:12px">★印はホームページをお持ちの場合リンク、以外はメールリンクしてあります（氏名アイウエオ順）</p>
+  <table class="town-table" border="1" cellspacing="0">
+    <tr><th>業　種</th><th>企　業　名</th><th>氏　名</th><th></th><th>HP / E-mail</th></tr>
+    <tr><td>陶磁器販売</td><td>株式会社東五六</td><td>浅井　興二</td><td>★</td><td><a href="https://www.tohgoro.co.jp/" target="_blank">tohgoro.co.jp</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>飲食店経営,不動産管理</td><td>大将軍土地株式会社</td><td>新井　一樹</td><td>★</td><td><a href="https://www.daishogun.co.jp/company/" target="_blank">daishogun.co.jp</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>染色業（黒染）、飲食業、賃貸マンション</td><td>（株）京都紋付</td><td>荒川　徹</td><td>★</td><td><a href="https://www.k-rewear.jp/" target="_blank">k-rewear.jp</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：汚れた衣類の黒染めは <a href="https://k-rewear.jp/" target="_blank">k-rewear.jp</a>　お食事の予約は <a href="https://tabelog.com/kyoto/A2601/" target="_blank">食べログ</a></td></tr>
+    <tr><td>販売促進企画、制作、販売</td><td>市川甚商事株式会社</td><td>市川　誠</td><td>★</td><td><a href="https://www.ichikawa-jin.co.jp/" target="_blank">ichikawa-jin.co.jp</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>呉服,和装小物,和装製品製造・卸</td><td>和光株式会社</td><td>井筒　平和</td><td>mail</td><td><a href="mailto:izutsu@wakou-kk.co.jp">izutsu@wakou-kk.co.jp</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>工業用ゴム、プラスチック製品全般</td><td>東邦工業ゴム株式会社</td><td>稲荷　暁</td><td>mail</td><td><a href="mailto:ugk20017@nifty.com">ugk20017@nifty.com</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>建築企画・設計・監理</td><td>株式会社象彦設計</td><td>岩村眞樹雄</td><td>★</td><td><a href="https://www.zohiko-ao.com" target="_blank">zohiko-ao.com</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>ワイン専門店</td><td>株式会社ワイングロッサリー</td><td>太田　達之</td><td>★</td><td><a href="https://www.winegrocery.com/" target="_blank">winegrocery.com</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>OA機器・ビジネスフォン・事務用品・アスクル</td><td>有限会社青雲堂</td><td>川口　昌良</td><td>★</td><td><a href="https://www.seiundoh.com" target="_blank">seiundoh.com</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：<a href="mailto:mk-seiundo@bb.excite.co.jp">mk-seiundo@bb.excite.co.jp</a></td></tr>
+    <tr><td>建設・不動産・損害保険代理店</td><td>センチュリー21 (株)ハウジング計画</td><td>樋村　幸一</td><td>★</td><td><a href="https://www.keikaku.com" target="_blank">keikaku.com</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>紳士服、婦人服飾小売</td><td>フクヤ洋服店</td><td>高橋　泰彦</td><td>★</td><td><a href="https://tailor-fukuya.com/" target="_blank">tailor-fukuya.com</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>呉服全般作製、着物スクール、文化財観光事業</td><td>株式会社冨田屋</td><td>田中　峰子</td><td>★</td><td><a href="https://www.tondaya.co.jp/" target="_blank">tondaya.co.jp</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>イベント・コンサート企画、制作</td><td>株式会社アクティブケイ</td><td>山本　恵</td><td>mail</td><td><a href="mailto:active@mbox.kyoto-inet.or.jp">active@mbox.kyoto-inet.or.jp</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+    <tr><td>餡・菓子・惣菜等製造販売</td><td>株式会社山梨製餡</td><td>山梨　彰一</td><td>★</td><td><a href="https://www.yamanashiseian.co.jp/" target="_blank">yamanashiseian.co.jp</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：和洋菓子、製パン用、甘党喫茶等の"あんこ"なんなりとご相談下さい。TEL 075-761-1146</td></tr>
+    <tr><td>建築の企画、設計、監理</td><td>有限会社一級建築士事務所ターボ設計</td><td>山領　正</td><td>mail</td><td><a href="mailto:yamaryo@turbo-sekkei.jp">yamaryo@turbo-sekkei.jp</a></td></tr>
+    <tr><td colspan="5" class="comment">コメント：</td></tr>
+  </table>
+</div>
+</div>
+
+<!-- Link Page -->
+<div id="page-link" class="page">
+<div class="container">
+  <div class="section-title" style="font-size:16px;padding:10px 14px;margin-bottom:16px">「何でもOK」　LINK PAGE</div>
+  <p style="font-size:12px;margin-bottom:12px">管理人より承認し掲載リンク致しますので<a href="mailto:office@nanchukai">HP事務局</a>までお申し出下さい。（順不同）</p>
+  <div class="info-block">
+    <div class="info-header">リンク一覧</div>
+    <div style="padding:12px">
+      <div class="info-row"><div class="info-label" style="width:200px"><a href="https://www.kyoto-yeg.jp/" target="_blank">YEG 京都商工会議所青年部</a></div><div class="info-val">南宙会が後援しております</div></div>
+      <div class="info-row"><div class="info-label" style="width:200px"><a href="https://www.kyo.or.jp/kyoto/" target="_blank">京都商工会議所</a></div><div class="info-val">京都商工会議所のホームページです</div></div>
+    </div>
+  </div>
+  <p style="font-size:12px;margin-top:12px">リンク掲載ご希望の方は<a href="mailto:office@nanchukai">こちらへ</a></p>
+</div>
+</div>
+
+<footer>
+  <div>南宙会　京都商工会議所青年部OB会</div>
+  <div style="margin-top:4px"><a href="mailto:nanchukai-all@nanchukai-ml.com">nanchukai-all@nanchukai-ml.com</a>　|　<a href="mailto:office@nanchukai">office@nanchukai</a>　|　<a href="mailto:info@nanchukai">info@nanchukai</a></div>
+  <div style="margin-top:8px">Copyright 2026　www.nanchukai.com　all rights reserved</div>
+</footer>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  var page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  if (el) el.classList.add('active');
+  return false;
+}
+</script>
+</body>
+</html>
